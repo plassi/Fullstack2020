@@ -1,4 +1,8 @@
 .vscode/settings.json
-osa1/anekdootit/.gitignore
-osa1/anekdootit/.yarn/*
-osa1/unicafe/.yarn/*
+osa1/anekdootit/.yarn
+osa1/unicafe/.yarn
+.vscode/*
+harjoitus/*
+osa2/maiden-tiedot/api-key.txt
+osa2/kurssitiedot/.vscode
+osa2/puhelinluettelo/.yarn
