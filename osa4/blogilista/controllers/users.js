@@ -14,7 +14,9 @@ usersRouter.post('/', async (request, response) => {
   
 
   if (!body.password) { 
+    body.password = ""
     response.status(400).json({ error: 'password missing' })
+    
   } else if (body.password.length < 3) {
     response.status(400).json({ error: 'password too short (must be at least 3 characters)' })
   }
