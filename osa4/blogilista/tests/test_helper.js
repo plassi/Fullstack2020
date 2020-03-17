@@ -16,6 +16,18 @@ const initialBlogs = [
   url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", likes: 2, __v: 0 }
 ]
 
+const initialUser = {
+  username: 'newUser',
+  name: 'New User',
+  password: 'password',
+}
+
+const newBlog = {
+  title: 'TestTitle',
+  author: 'TestAuthor',
+  url: 'http://testi.com/testi.html',
+}
+
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'gonesoon' })
   await blog.save()
@@ -35,5 +47,5 @@ const usersInDb = async () => {
 }
 
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb, usersInDb
+  initialBlogs, initialUser, newBlog, nonExistingId, blogsInDb, usersInDb
 }

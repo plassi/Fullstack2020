@@ -5,10 +5,40 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
+  await User.deleteMany({})
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+
+  await User.create(helper.initialUser)
+
+  const users = await helper.usersInDb()
+  const userId = users[0].id
+  
+  helper.initialBlogs.map(async blog => {
+    //Lisää blogi kerrallaan post käskyllä lisäten käyttäjä.
+    
+    const newBlog = {
+      ...blog,
+      user: userId
+    }
+    
+    const savedBlog = await Blog.create(newBlog)
+    
+    
+  })
+  const user = await User.findById(userId)
+
+  const blogsAtStart = await helper.blogsInDb()
+  
+  blogsAtStart.map(blog => {
+    user.blogs = user.blogs.concat(blog.id)
+
+  })
+  
+  await user.save()
+  
 })
 
 describe('GET blogs', () => {
@@ -45,11 +75,14 @@ describe('GET blogs', () => {
 describe('POST blog', () => {
 
   test('a valid blog can be added ', async () => {
+    const users = await helper.usersInDb()
+    
     const newBlog = {
       title: 'TestTitle',
       author: 'TestAuthor',
       url: 'http://testi.com/testi.html',
-      likes: 5
+      likes: 5,
+      userId: users[0].id
     }
 
     await api
@@ -68,10 +101,12 @@ describe('POST blog', () => {
   })
 
   test('if posted blog is not given likes, likes is 0 ', async () => {
+    const users = await helper.usersInDb()
     const newBlog = {
       title: 'TestTitle',
       author: 'TestAuthor',
       url: 'http://testi.com/testi.html',
+      userId: users[0].id
     }
 
     await api
@@ -86,8 +121,11 @@ describe('POST blog', () => {
   })
 
   test('posted blog has to have title and url', async () => {
+    const users = await helper.usersInDb()
+    
     const newBlog = {
-      author: 'TestAuthor'
+      author: 'TestAuthor',
+      userId: users[0].id
     }
 
     await api
@@ -98,6 +136,31 @@ describe('POST blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+  })
+
+  test('posted blog has userId and user has array of posted blogs', async () => {
+    const users =  await helper.usersInDb()
+
+    const newBlog = {
+      title: 'TestTitle',
+      author: 'TestAuthor',
+      url: 'http://testi.com/testi.html',
+      userId: users[0].id
+    }
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const usersAtEnd = await helper.usersInDb()
+
+    const res = await api.get('/api/blogs')
+    
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1 )
+    expect(res.body[0].user.name).toEqual(usersAtEnd[0].name)
   })
 })
 
@@ -127,10 +190,11 @@ describe('UPDATE blog', () => {
 
   test('saves and returns updated blog', async () => {
     const blogsAtStart = await helper.blogsInDb()
+    
     const blogToUpdate = blogsAtStart[0]
 
     blogToUpdate.likes = 9999
-    
+
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
       .send(blogToUpdate)
