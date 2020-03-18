@@ -7,11 +7,14 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+let token = ''
+
 beforeEach(async () => {
   await User.deleteMany({})
   await Blog.deleteMany({})
 
-  await User.create(helper.initialUser)
+  await api.post('/api/users')
+    .send(helper.initialUser)
 
   const users = await helper.usersInDb()
   const userId = users[0].id
@@ -38,7 +41,17 @@ beforeEach(async () => {
   })
   
   await user.save()
-  
+
+  // Get a token for user
+  const loginInfo = {
+    username: helper.initialUser.username,
+    password: helper.initialUser.password
+  }
+  const response = await api
+    .post('/api/login')
+    .send(loginInfo)
+  token = ('bearer ' + response.body.token)
+
 })
 
 describe('GET blogs', () => {
@@ -73,10 +86,10 @@ describe('GET blogs', () => {
 })
 
 describe('POST blog', () => {
-
+  
   test('a valid blog can be added ', async () => {
     const users = await helper.usersInDb()
-    
+
     const newBlog = {
       title: 'TestTitle',
       author: 'TestAuthor',
@@ -84,13 +97,14 @@ describe('POST blog', () => {
       likes: 5,
       userId: users[0].id
     }
-
-    await api
+    
+    const response = await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-
+    
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
 
@@ -112,6 +126,7 @@ describe('POST blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -131,6 +146,7 @@ describe('POST blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
@@ -151,6 +167,7 @@ describe('POST blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -162,6 +179,23 @@ describe('POST blog', () => {
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1 )
     expect(res.body[0].user.name).toEqual(usersAtEnd[0].name)
   })
+
+  test('if token is not posted, returns 401 Unauthorized', async () => {
+    const users =  await helper.usersInDb()
+
+    const newBlog = {
+      title: 'TestTitle',
+      author: 'TestAuthor',
+      url: 'http://testi.com/testi.html',
+      userId: users[0].id
+    }
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+  })
 })
 
 describe('DELETE blog', () => {
@@ -172,6 +206,7 @@ describe('DELETE blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', token)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
