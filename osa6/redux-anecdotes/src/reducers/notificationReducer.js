@@ -9,16 +9,18 @@ const reducer = (state = '', action) => {
   }
 }
 
-export const setNotification = (message) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    data: message
-  }
-}
+export const setNotification = (...params) => {
 
-export const clearNotification = () => {
-  return {
-    type: 'CLEAR_NOTIFICATION'
+  return async dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: params[0]
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'CLEAR_NOTIFICATION'
+      })
+    }, params[1] * 1000)
   }
 }
 
