@@ -1,6 +1,9 @@
 const reducer = (state = '', action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
+      if (state.length > 0) {
+        clearTimeout(state[1])
+      }
       return action.data
     case 'CLEAR_NOTIFICATION':
       return ''
@@ -11,16 +14,17 @@ const reducer = (state = '', action) => {
 
 export const setNotification = (...params) => {
 
+  const timeOut = (dispatch, time) => setTimeout(() => {
+    dispatch({
+      type: 'CLEAR_NOTIFICATION'
+    })
+  }, time * 1000)
+
   return async dispatch => {
     dispatch({
       type: 'SET_NOTIFICATION',
-      data: params[0]
-    })
-    setTimeout(() => {
-      dispatch({
-        type: 'CLEAR_NOTIFICATION'
-      })
-    }, params[1] * 1000)
+      data: [params[0], timeOut(dispatch, params[1])]
+    })  
   }
 }
 
