@@ -4,10 +4,13 @@ import Notification from './components/Notification'
 import ErrorMessage from './components/ErrorMessage'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { setNotification } from './reducers/notificationReducer'
+import { setError } from './reducers/errorReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const dispatch = useDispatch()
+
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -28,10 +31,7 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-      setNotificationMessage(`logged in as ${username}`)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
+      dispatch(setNotification(`logged in as ${username}`, 5))
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -39,11 +39,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+    } catch (e) {
+      dispatch(setError('wrong credentials', 5))
     }
   }
 
@@ -82,7 +79,7 @@ const App = () => {
     return (
       <>
         <h2>log in to application</h2>
-        <ErrorMessage message={errorMessage} />
+        <ErrorMessage />
         {loginForm()}
       </>
     )
@@ -92,10 +89,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notificationMessage} />
-      <ErrorMessage message={errorMessage} />
+      <Notification />
+      <ErrorMessage />
       <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
-      <BlogList user={user}/>
+      <BlogList user={user} />
     </div>
   )
 

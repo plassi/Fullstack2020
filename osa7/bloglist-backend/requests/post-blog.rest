@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs HTTP/1.1
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpZCI6IjVlNjkxMDY3NzJiODhmMGVmNjA0NzJiOSIsImlhdCI6MTU4NDU1NzQ5MH0.w9RX32v3AFwI0XAbghm49PbSeiFeYOTWYwOnRhE8ezc
+
+{
+  "title": "testiblogi",
+  "author": "Teemu Testaaja",
+  "url": "www.testiblogi.fi",
+  "likes": 2
+}
