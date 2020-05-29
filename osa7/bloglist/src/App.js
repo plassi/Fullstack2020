@@ -27,14 +27,10 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    try {
-      dispatch(login({ username, password }))
-      dispatch(setNotification(`logged in as ${username}`, 5))
-      setUsername('')
-      setPassword('')
-    } catch (e) {
-      dispatch(setError('wrong credentials', 5))
-    }
+    dispatch(login({ username, password }))
+
+    setUsername('')
+    setPassword('')
   }
 
 
