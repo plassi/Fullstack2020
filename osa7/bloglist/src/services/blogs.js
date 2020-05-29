@@ -12,11 +12,17 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+const getBlog = (object) => {
+  const request = axios.get(`${baseUrl}/${object.id}`)
+  return request.then(response => response.data)
+}
+
 const create = async newObject => {
   const config = {
     headers: { Authorization: token },
   }
   const response = await axios.post(baseUrl, newObject, config)
+  
   return response.data
 }
 
@@ -35,7 +41,7 @@ const addLike = async blogObject => {
     user: blogObject.user ? blogObject.user.id : null
   }
   const response = await axios.put(`${baseUrl}/${blogObject.id}`, newObject)
-  return response
+  return response.data
 }
 
-export default { getAll, create, setToken, addLike, deleteBlog }
+export default { getAll, create, setToken, addLike, deleteBlog, getBlog }

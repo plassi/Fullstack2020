@@ -16,7 +16,7 @@ const Blog = (props) => {
   const removeButton = () => {
 
     if (props.blog.user) {
-      if (props.user.username === props.blog.user.username) {
+      if (props.user.id === props.blog.user.id) {
         return (
           <button id='remove-blog-button' onClick={props.removeButtonClickHandler} style={{ backgroundColor: 'blue' }}>remove</button>
         )
@@ -46,7 +46,7 @@ const Blog = (props) => {
         <button onClick={toggleVisibility}>hide</button>
         <div>{props.blog.url}</div>
         <div>likes {props.blog.likes} <button id='like-blog-button' onClick={props.likeButtonClickHandler}>like</button></div>
-        {props.usersName}
+        {props.blog.user ? props.blog.user.name : null}
         {removeButton()}
       </div>
     </div>
