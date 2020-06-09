@@ -10,8 +10,8 @@ const reducer = (state = [], action) => {
       // order by likes
       return newState.sort((a, b) => b.likes - a.likes)
     case 'CREATE_BLOG':
-      const newAnecdote = action.data
-      return state.concat(newAnecdote)
+      const newBlog = action.data
+      return state.concat(newBlog)
     case 'DELETE_BLOG':
       const blogToRemove = action.data
       return state.filter(blog => blog.id !== blogToRemove.id)

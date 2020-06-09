@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { initializeUsers } from '../reducers/userReducer'
 
 const BlogForm = ({ createBlog }) => {
+  const dispatch = useDispatch()
+
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
@@ -29,6 +33,7 @@ const BlogForm = ({ createBlog }) => {
     setNewTitle('')
     setNewAuthor('')
     setNewUrl('')
+    dispatch(initializeUsers())
   }
 
   return (

@@ -2,8 +2,10 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Togglable from './Togglable'
 import BlogForm from './BlogForm'
-import Blog from './Blog'
-import { createBlog, likeBlog, removeBlog } from '../reducers/blogReducer'
+import { createBlog } from '../reducers/blogReducer'
+import {
+  Link
+} from "react-router-dom"
 
 const BlogList = (props) => {
   const dispatch = useDispatch()
@@ -17,26 +19,24 @@ const BlogList = (props) => {
     dispatch(createBlog(blogObject))
   }
 
-  const likeButtonClickHandler = (blog) => {
-    dispatch(likeBlog(blog))
-  }
-
-  const removeButtonClickHandler = (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(removeBlog(blog))
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
   }
 
   const renderBlogs = () => {
     return (
       blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          user={props.user}
-          likeButtonClickHandler={() => likeButtonClickHandler(blog)}
-          removeButtonClickHandler={() => removeButtonClickHandler(blog)}
-        />
+        <div key={blog.id} style={blogStyle} className='blog-listing'>
+
+          <Link to={`blogs/${blog.id}`}>
+            {blog.title} {blog.author}
+          </Link>
+        </div>
+
       )
     )
   }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import Users from './components/Users'
 import User from './components/User'
 import Notification from './components/Notification'
@@ -21,6 +22,7 @@ const App = () => {
 
   const user = useSelector(state => state.login)
   const users = useSelector(state => state.user)
+  const blogs = useSelector(state => state.blog)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -73,11 +75,14 @@ const App = () => {
   }
 
   const userMatch = useRouteMatch('/users/:id')
-  
   const selectedUser = userMatch
     ? users.find(user => user.id === userMatch.params.id)
     : null
-  
+
+  const blogMatch = useRouteMatch('/blogs/:id')
+  const selectedBlog = blogMatch
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
+    : null
 
   if (user === null) {
     return (
@@ -92,11 +97,15 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <div>
+        <Link to="/">blogs</Link>
+        <Link to="/users">users</Link>
+        {user.name} logged in <button onClick={() => logout()}>logout</button>
+      </div>
       <Notification />
       <ErrorMessage />
-      <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
 
+      <h2>blog app</h2>
 
       <Switch>
         <Route path="/users/:id">
@@ -104,6 +113,9 @@ const App = () => {
         </Route>
         <Route path="/users">
           <Users users={users} />
+        </Route>
+        <Route path="/blogs/:id">
+          <Blog blog={selectedBlog} user={user} />
         </Route>
         <Route path="/">
           <BlogList user={user} />
