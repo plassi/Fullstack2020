@@ -2,6 +2,8 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { setNotification } from '../reducers/notificationReducer'
 import { setError } from '../reducers/errorReducer'
+import { initializeUsers } from '../reducers/userReducer'
+import { initializeBlogs } from '../reducers/blogReducer'
 
 const reducer = (state = null, action) => {
   switch (action.type) {
@@ -30,7 +32,9 @@ export const login = (props) => {
         'loggedBlogappUser', JSON.stringify(user)
       )
       dispatch(setNotification(`logged in as ${props.username}`, 5))
-    
+      dispatch(initializeUsers())
+      dispatch(initializeBlogs())
+
     } catch (e) {
       dispatch(setError('wrong credentials', 5))
     }

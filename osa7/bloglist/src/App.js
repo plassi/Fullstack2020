@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import BlogList from './components/BlogList'
+import Users from './components/Users'
+import User from './components/User'
 import Notification from './components/Notification'
 import ErrorMessage from './components/ErrorMessage'
-import { setNotification } from './reducers/notificationReducer'
-import { setError } from './reducers/errorReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/userReducer'
 import { login, logged, logoff } from './reducers/loginReducer'
+
+import {
+  Switch,
+  Route,
+  Link,
+  useRouteMatch
+} from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
 
   const user = useSelector(state => state.login)
+  const users = useSelector(state => state.user)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -21,8 +30,9 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       dispatch(logged(user))
+      dispatch(initializeBlogs())
+      dispatch(initializeUsers())
     }
-    dispatch(initializeBlogs())
   }, [dispatch])
 
   const handleLogin = async (event) => {
@@ -62,6 +72,12 @@ const App = () => {
     dispatch(logoff())
   }
 
+  const userMatch = useRouteMatch('/users/:id')
+  
+  const selectedUser = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+  
 
   if (user === null) {
     return (
@@ -71,8 +87,8 @@ const App = () => {
         {loginForm()}
       </>
     )
-
   }
+
 
   return (
     <div>
@@ -80,7 +96,19 @@ const App = () => {
       <Notification />
       <ErrorMessage />
       <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
-      <BlogList user={user} />
+
+
+      <Switch>
+        <Route path="/users/:id">
+          <User user={selectedUser} />
+        </Route>
+        <Route path="/users">
+          <Users users={users} />
+        </Route>
+        <Route path="/">
+          <BlogList user={user} />
+        </Route>
+      </Switch>
     </div>
   )
 
