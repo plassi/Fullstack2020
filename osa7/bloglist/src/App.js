@@ -15,7 +15,7 @@ import {
   Link,
   useRouteMatch
 } from "react-router-dom"
-import { Container } from 'react-bootstrap'
+import { Container, Form, Button, Navbar, Nav } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -47,27 +47,30 @@ const App = () => {
 
 
   const loginForm = () => (
-    <form id='login-form' onSubmit={handleLogin}>
-      <div>
-        username
-        <input
+    <Form id='login-form' onSubmit={handleLogin}>
+      <Form.Group>
+
+        <Form.Label>
+          username:
+        </Form.Label>
+        <Form.Control
           type="text"
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
         />
-      </div>
-      <div>
-        password
-        <input
+        <Form.Label>
+          password:
+        </Form.Label>
+        <Form.Control
           type="password"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
-      </div>
-      <button type="submit">login</button>
-    </form>
+        <Button type="submit">login</Button>
+      </Form.Group>
+    </Form >
   )
 
   const logout = () => {
@@ -97,11 +100,29 @@ const App = () => {
 
   return (
     <Container>
-      <div>
-        <Link to="/">blogs</Link>
-        <Link to="/users">users</Link>
-        {user.name} logged in <button onClick={() => logout()}>logout</button>
-      </div>
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link href="#" as="span">
+              <Link to="/">blogs</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link to="/users">users</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              {user
+                ? <em>{user.name} logged in</em>
+                : <Link to="/login">login</Link>
+              }
+            </Nav.Link>
+            <Nav.Link>
+              <Button onClick={() => logout()}>logout</Button>
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+
       <Notification />
       <ErrorMessage />
 
@@ -121,7 +142,7 @@ const App = () => {
           <BlogList user={user} />
         </Route>
       </Switch>
-    </Container>
+    </Container >
   )
 
 }

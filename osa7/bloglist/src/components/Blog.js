@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import Comments from './Comments'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { Redirect } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch()
@@ -18,7 +19,7 @@ const Blog = ({ blog, user }) => {
     if (blog.user) {
       if (user.id === blog.user.id) {
         return (
-          <button id='remove-blog-button' style={{ backgroundColor: 'blue' }} onClick={() => dispatch(removeBlog(blog))}>remove</button>
+          <Button variant="danger" id='remove-blog-button' onClick={() => dispatch(removeBlog(blog))}>remove</Button>
         )
       }
     }
@@ -42,7 +43,7 @@ const Blog = ({ blog, user }) => {
       </h2>
 
       <div>{blog.url}</div>
-      <div>{blog.likes} likes <button id='like-blog-button' onClick={() => dispatch(likeBlog(blog))}>like</button></div>
+      <div>{blog.likes} likes <Button variant="success" id='like-blog-button' onClick={() => dispatch(likeBlog(blog))}>like</Button></div>
       {blog.user
         ? blogUser()
         : null}
