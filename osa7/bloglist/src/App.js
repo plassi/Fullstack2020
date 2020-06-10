@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { login, logged, logoff } from './reducers/loginReducer'
-
 import {
   Switch,
   Route,
   Link,
   useRouteMatch
 } from "react-router-dom"
+import { Container } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -86,17 +86,17 @@ const App = () => {
 
   if (user === null) {
     return (
-      <>
+      <Container>
         <h2>log in to application</h2>
         <ErrorMessage />
         {loginForm()}
-      </>
+      </Container>
     )
   }
 
 
   return (
-    <div>
+    <Container>
       <div>
         <Link to="/">blogs</Link>
         <Link to="/users">users</Link>
@@ -121,7 +121,7 @@ const App = () => {
           <BlogList user={user} />
         </Route>
       </Switch>
-    </div>
+    </Container>
   )
 
 }

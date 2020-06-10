@@ -2,6 +2,12 @@ import blogService from '../services/blogs'
 
 const reducer = (state = [], action) => {
   switch (action.type) {
+    case 'ADD_COMMENT':
+      const blogToComment = action.data
+      const changedState = state.map(blog =>
+        blog.id === blogToComment.id ? blogToComment : blog
+      )
+      return changedState
     case 'LIKE_BLOG':
       const blogToChange = action.data
       const newState = state.map(blog =>
@@ -29,6 +35,18 @@ export const likeBlog = (blog) => {
     )
     dispatch({
       type: 'LIKE_BLOG',
+      data: newBlog
+    })
+  }
+}
+
+export const addComment = (blog) => {
+  return async dispatch => {
+    const newBlog = await blogService.addComment(blog).then(response =>
+      blogService.getBlog(response)
+    )
+    dispatch({
+      type: 'ADD_COMMENT',
       data: newBlog
     })
   }

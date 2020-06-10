@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import Comments from './Comments'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { Redirect } from 'react-router-dom'
 
@@ -46,6 +47,7 @@ const Blog = ({ blog, user }) => {
         ? blogUser()
         : null}
       {removeButton()}
+      <Comments blog={blog}/>
     </div>
 
   )

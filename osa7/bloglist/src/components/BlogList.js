@@ -6,6 +6,7 @@ import { createBlog } from '../reducers/blogReducer'
 import {
   Link
 } from "react-router-dom"
+import { Table } from 'react-bootstrap'
 
 const BlogList = (props) => {
   const dispatch = useDispatch()
@@ -19,27 +20,29 @@ const BlogList = (props) => {
     dispatch(createBlog(blogObject))
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
 
   const renderBlogs = () => {
     return (
-      blogs.map(blog =>
-        <div key={blog.id} style={blogStyle} className='blog-listing'>
+      <Table striped>
+        <tbody>
+          {blogs.map(blog =>
 
-          <Link to={`blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
-        </div>
-
-      )
+            <tr key={blog.id}>
+              <td>
+                <Link to={`blogs/${blog.id}`}>
+                  {blog.title}
+                </Link>
+              </td>
+              <td>
+                {blog.author}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     )
   }
+
 
   return (
     <>
