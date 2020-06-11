@@ -1,4 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v1 } = require('uuid')
+
+const uuid = v1
 
 let authors = [
   {
@@ -16,11 +19,11 @@ let authors = [
     id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
     born: 1821
   },
-  { 
+  {
     name: 'Joshua Kerievsky', // birthyear not known
     id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
   },
-  { 
+  {
     name: 'Sandi Metz', // birthyear not known
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
@@ -59,7 +62,7 @@ let books = [
     author: 'Joshua Kerievsky',
     id: "afa5de01-344d-11e9-a414-719c6709cf3e",
     genres: ['refactoring', 'patterns']
-  },  
+  },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
@@ -93,7 +96,7 @@ const typeDefs = gql`
 
   type Author {
     name: String!,
-    born: Int!
+    born: Int
     bookCount: Int!
   }
 
@@ -102,6 +105,15 @@ const typeDefs = gql`
     authorCount: Int!
     allBooks(author: String genre:String): [Book!]!
     allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
   }
 `
 
@@ -118,10 +130,10 @@ const resolvers = {
         const byAuthor = (book) =>
           args.author === book.author ? book : !book
         filteredBooks = filteredBooks.filter(byAuthor)
-      } 
+      }
       if (args.genre) {
         const byGenre = (book) =>
-          book.genres.includes(args.genre) ? book: !book
+          book.genres.includes(args.genre) ? book : !book
         filteredBooks = filteredBooks.filter(byGenre)
       }
       return filteredBooks
@@ -130,6 +142,19 @@ const resolvers = {
   },
   Author: {
     bookCount: (root) => books.filter(book => book.author === root.name).length
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuid() }
+      books = books.concat(book)
+
+      const authorNames = authors.map(author => author.name) 
+      if (!authorNames.includes(args.author)) {
+        const author = { name: args.author, id: uuid() }
+        authors = authors.concat(author)
+      }
+      return book
+    }
   }
 }
 
