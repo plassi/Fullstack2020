@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 
 mongoose.set('useFindAndModify', false)
@@ -71,22 +71,39 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      const authors = await Author.find({ name: args.author })
-      if (authors.length === 0) {
-        const author = new Author({ name: args.author })
-        await author.save()
-        const book = new Book({ title: args.title, published: args.published, genres: args.genres, author: author })
-        return book.save()
-      } else {
-        const book = new Book({ title: args.title, published: args.published, genres: args.genres, author: authors[0] })
-        return book.save()
-      }
+      let author = await Author.findOne({ name: args.author })
 
+      if (!author) {
+        author = new Author({ name: args.author })
+        try {
+          await author.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
+      }
+      const book = new Book({ ...args, author: author })
+      try {
+        await book.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return book
     },
+
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
-      await author.save()
+      try {
+        await author.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
       return author
     },
   },
