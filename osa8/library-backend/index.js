@@ -17,13 +17,13 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 
 const Author = require('./models/author')
 const Book = require('./models/book')
-const author = require('./models/author')
 
 const typeDefs = gql`
 
   type Author {
     name: String!,
     born: Int,
+    bookCount: Int!,
     id: ID!
   }
 
@@ -38,7 +38,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks: [Book!]!
+    allBooks(genre: String): [Book!]!
     allAuthors: [Author!]!
   }
 
@@ -60,23 +60,48 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: () => Book.find({}).populate('author'),
+    allBooks: (root, args) => {
+      if (!args.genre) {
+        return Book.find({}).populate('author')
+      }
+
+      return Book.find({ genres: { $in: [args.genre] } }).populate('author')
+    },
     allAuthors: () => Author.find({}),
   },
   Mutation: {
     addBook: async (root, args) => {
-      const book = new Book({ title: args.title, published: args.published, genres: args.genres })
-      
-      const authors = await Author.find({})
-      const authorNames = authors.map(author => author.name)
-      if (!authorNames.includes(args.author)) {
+      const authors = await Author.find({ name: args.author })
+      if (authors.length === 0) {
         const author = new Author({ name: args.author })
         await author.save()
-        book.author = author 
+        const book = new Book({ title: args.title, published: args.published, genres: args.genres, author: author })
+        return book.save()
+      } else {
+        const book = new Book({ title: args.title, published: args.published, genres: args.genres, author: authors[0] })
+        return book.save()
       }
 
-      
-      return book.save()
+    },
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
+      await author.save()
+      return author
+    },
+  },
+  Book: {
+    author: (root) => {
+      return {
+        name: root.author.name,
+        born: root.author.born
+      }
+    }
+  },
+  Author: {
+    bookCount: async (root, args) => {
+      const books = await Book.find({})
+      return books.filter(book => String(book.author) === String(root._id)).length
     }
   }
 }
