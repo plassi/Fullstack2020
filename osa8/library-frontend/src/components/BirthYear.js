@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 import { SET_BIRTH, ALL_AUTHORS } from '../queries'
 
 const BirthYear = ({ authors }) => {
-  const [name, setName] = useState('')
+  const [name, setName] = useState(authors[0].name)
   const [born, setBorn] = useState('')
 
   const [setBirthYear] = useMutation(SET_BIRTH, {
@@ -18,7 +18,7 @@ const BirthYear = ({ authors }) => {
 
     setBirthYear({ variables: { name, born: bornInt } })
 
-    setName('')
+    setName(authors[0].name)
     setBorn('')
   }
 
