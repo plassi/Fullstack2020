@@ -7,9 +7,9 @@ import LoginForm from './components/LoginForm'
 import { useApolloClient } from '@apollo/client'
 
 const App = () => {
+  const client = useApolloClient()
   const [token, setToken] = useState(null)
   const [page, setPage] = useState('authors')
-  const client = useApolloClient()
 
   const logout = () => {
     setToken(null)

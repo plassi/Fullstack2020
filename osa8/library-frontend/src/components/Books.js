@@ -3,7 +3,9 @@ import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS)
+  const result = useQuery(ALL_BOOKS, {
+    fetchPolicy: "no-cache"
+  })
 
   const [filter, setFilter] = useState('all genres')
 

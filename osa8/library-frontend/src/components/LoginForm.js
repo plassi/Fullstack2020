@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
-import { LOGIN } from '../queries'
+import { LOGIN, USER_DATA } from '../queries'
 
-const LoginForm = (props) => {
-
+const LoginForm = (props, { userQuery }) => {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const [login, result] = useMutation(LOGIN)
+  const [login, result] = useMutation(LOGIN, {
+    refetchQueries: [{ query: USER_DATA }]
+  })
 
   useEffect(() => {
     if (result.data) {

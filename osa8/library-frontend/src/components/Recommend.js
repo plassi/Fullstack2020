@@ -1,33 +1,59 @@
-import React from 'react'
-import { useQuery } from '@apollo/client'
-import { FAVORITE_GENRE, BOOKS_WITH_GENRE } from '../queries'
+import React, { useEffect, useState } from 'react'
+import { useQuery, useLazyQuery } from '@apollo/client'
+import { BOOKS_WITH_GENRE, USER_DATA } from '../queries'
+
 
 const Recommend = (props) => {
-  
-  if (!props.show) {
-    return null
-  }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const favResult = useQuery(FAVORITE_GENRE)
-  
-  const favoriteGenre = !favResult.data ? '' : favResult.data.me.favoriteGenre
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const bookResults = useQuery(BOOKS_WITH_GENRE, {
-    variables: { genre: favoriteGenre }
+  const [getBooks, bookResult] = useLazyQuery(BOOKS_WITH_GENRE, {
+    fetchPolicy: "no cache"
+  })
+  const userResult = useQuery(USER_DATA, {
+    fetchPolicy: "no-cache"
   })
 
-  if (!favResult.data || !bookResults.data) {
-    return (null)
-  } 
-  
-  const books = bookResults.data.allBooks
+  const [genre, setGenre] = useState(null)
+  const [books, setBooks] = useState(null)
+
+  useEffect(() => {
+    if (!userResult) {
+      console.log('no user result');
+
+    } else if (!userResult.data) {
+      console.log('no userResult data');
+
+    } else if (userResult.data.me !== null) {
+      console.log('userResults', userResult);
+      setGenre(userResult.data.me.favoriteGenre)
+      getBooks({ variables: { genre: userResult.data.me.favoriteGenre } })
+    }
+    // if (!userResult.data) {
+    //   getUser()
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userResult])
+
+  useEffect(() => {
+    if (bookResult.data) {
+      setBooks(bookResult.data.allBooks)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookResult.data])
+
+
+  console.log(genre);
+  console.log(bookResult.data);
+
+  if (!props.show || !userResult || !books || !genre) {
+    return null
+  }
+  console.log(userResult.data);
 
   return (
     <div>
       <h2>books</h2>
-  in your favorite genre <b>{favResult.data.me.favoriteGenre}</b>
+  in your favorite genre <b>{genre}</b>
       <table>
         <tbody>
           <tr>
