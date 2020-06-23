@@ -17,13 +17,10 @@ const Recommend = (props) => {
 
   useEffect(() => {
     if (!userResult) {
-      console.log('no user result');
 
     } else if (!userResult.data) {
-      console.log('no userResult data');
 
     } else if (userResult.data.me !== null) {
-      console.log('userResults', userResult);
       setGenre(userResult.data.me.favoriteGenre)
       getBooks({ variables: { genre: userResult.data.me.favoriteGenre } })
     }
@@ -41,14 +38,9 @@ const Recommend = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookResult.data])
 
-
-  console.log(genre);
-  console.log(bookResult.data);
-
   if (!props.show || !userResult || !books || !genre) {
     return null
   }
-  console.log(userResult.data);
 
   return (
     <div>
