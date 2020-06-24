@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
   periodLength: number,
   trainingDays: number,
   success: boolean,
@@ -37,7 +37,7 @@ const ratingDescriptor = (rating: number): string => {
   }
 };
 
-const calculateExercises = (exercises: number[], target: number): Result => {
+export const calculateExercises = (exercises: number[], target: number): Result => {
 
   const periodLength = exercises.length;
   const trainingDays = exercises.filter(exercise => exercise !== 0).length;
