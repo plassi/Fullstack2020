@@ -11,7 +11,7 @@ app.get('/bmi', (req, res) => {
   const weight = Number(req.query.weight)
   const height = Number(req.query.height)
 
-  if (!weight || !height) {
+  if (!req.query.weight || !req.query.height) {
     res.status(404).send('parameters missing')
   }
 
