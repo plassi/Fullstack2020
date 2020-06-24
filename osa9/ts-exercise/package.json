@@ -1,0 +1,16 @@
+{
+  "name": "ts-exercise",
+  "version": "1.0.0",
+  "description": "Fullstack 2020 Typescript exercises",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node",
+    "calculateBMI": "ts-node bmiCalculator.ts"
+  },
+  "author": "Lassi Puurunen",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
+  }
+}
