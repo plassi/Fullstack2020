@@ -8,6 +8,11 @@ interface Result {
   average: number
 }
 
+interface CalcInput {
+  exercises: number[],
+  target: number
+}
+
 const ratingCalculator = (target: number, average: number): number => {
   const value = average / target;
   if (value < 0.65) {
@@ -17,7 +22,7 @@ const ratingCalculator = (target: number, average: number): number => {
   } else {
     return 3;
   }
-}
+};
 
 const ratingDescriptor = (rating: number): string => {
   switch (rating) {
@@ -28,23 +33,18 @@ const ratingDescriptor = (rating: number): string => {
     case 3:
       return 'keep up the great work!';
     default:
-      break;
+      return '';
   }
-}
+};
 
-const calculateExercises = (arguments: number[]): Result => {
-  const exercises: number[] = [];
-  for (let index = 1; index < arguments.length; index++) {
-    exercises.push(arguments[index])
-  }
+const calculateExercises = (exercises: number[], target: number): Result => {
 
   const periodLength = exercises.length;
   const trainingDays = exercises.filter(exercise => exercise !== 0).length;
-  const target = arguments[0]
   const average = exercises.reduce((prev, current) => current + prev) / periodLength;
   const success = average >= target ? true : false;
-  const rating = ratingCalculator(target, average)
-  const ratingDescription = ratingDescriptor(rating)
+  const rating = ratingCalculator(target, average);
+  const ratingDescription = ratingDescriptor(rating);
 
   return {
     periodLength,
@@ -55,10 +55,10 @@ const calculateExercises = (arguments: number[]): Result => {
     target,
     average
   };
-}
+};
 
-const parseArguments = (args: Array<string>): number[] => {
-  if (args.length < 2) throw new Error('Not enough arguments');
+const parseArguments = (args: Array<string>): CalcInput => {
+  if (args.length < 4) throw new Error('Not enough arguments');
 
   // Check if all arguments are number
   for (let index = 2; index < args.length; index++) {
@@ -67,19 +67,25 @@ const parseArguments = (args: Array<string>): number[] => {
     }
   }
 
-  const argvStartPositionExercises = 2;
-  const arguments: number[] = [];
+  const target = Number(args[2]);
 
-  for (let index = argvStartPositionExercises; index < process.argv.length; index++) {
-    arguments.push(Number(process.argv[index]));
+  const argvStartPositionExercises = 3;
+  const exercises: number[] = [];
+
+  for (let index = argvStartPositionExercises; index < args.length; index++) {
+    exercises.push(Number(args[index]));
   }
 
-  return arguments
-}
+  return {
+    exercises: exercises,
+    target: target
+  };
+};
 
 try {
-  const arguments: number[] | void = parseArguments(process.argv);
-  console.log(calculateExercises(arguments));
+  const { exercises, target }: CalcInput = parseArguments(process.argv);
+  console.log(calculateExercises(exercises, target));
 } catch (e) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.log('Error, something bad happened, message: ', e.message);
 }

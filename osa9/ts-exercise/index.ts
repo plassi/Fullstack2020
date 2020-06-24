@@ -1,5 +1,5 @@
 import express from 'express';
-import { calculateBmi } from './bmiCalculator'
+import { calculateBmi } from './bmiCalculator';
 
 const app = express();
 
@@ -8,21 +8,21 @@ app.get('/hello', (_req, res) => {
 });
 
 app.get('/bmi', (req, res) => {
-  const weight = Number(req.query.weight)
-  const height = Number(req.query.height)
+  const weight = Number(req.query.weight);
+  const height = Number(req.query.height);
 
   if (!req.query.weight || !req.query.height) {
-    res.status(404).send('parameters missing')
+    res.status(404).send('parameters missing');
   }
 
   if (isNaN(weight) || isNaN(height)) {
-    res.status(404).send('malformatted parameters')
+    res.status(404).send('malformatted parameters');
   }
 
-  const bmi = calculateBmi(height, weight)
+  const bmi = calculateBmi(height, weight);
 
-  res.send({weight, height, bmi})
-})
+  res.send({weight, height, bmi});
+});
 
 const PORT = 3002;
 
