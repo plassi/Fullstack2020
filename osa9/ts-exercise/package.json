@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "ts-node": "ts-node",
-    "calculateBMI": "ts-node bmiCalculator.ts"
+    "calculateBmi": "ts-node bmiCalculator.ts",
+    "calculateExercises": "ts-node exerciseCalculator.ts"
   },
   "author": "Lassi Puurunen",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^14.0.14",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }
