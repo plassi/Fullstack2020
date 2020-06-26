@@ -1,23 +1,20 @@
 import React from "react";
-import { CoursePartBase } from "../types";
+import { CoursePart } from "../types";
+
+import Part from './Part'
 
 interface ContentProps {
-  courseParts: Array<CoursePartBase>;
+  courseParts: Array<CoursePart>;
 }
 
 const Content: React.FC<ContentProps> = ({ courseParts }) => {
 
   return (
     <div>
-      <p>
-        {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-        {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-        {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
+      <Part coursePart={courseParts[0]} />
+      <Part coursePart={courseParts[1]} />
+      <Part coursePart={courseParts[2]} />
+      <Part coursePart={courseParts[3]} />
     </div>
   )
 }
