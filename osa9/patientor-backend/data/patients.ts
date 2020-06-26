@@ -7,7 +7,8 @@ const patients: PatientEntry[] = [
       "dateOfBirth": "1986-07-09",
       "ssn": "090786-122X",
       "gender": "male",
-      "occupation": "New york city cop"
+      "occupation": "New york city cop",
+      "entries": []
   },
   {
       "id": "d2773598-f723-11e9-8f0b-362b9e155667",
@@ -15,7 +16,8 @@ const patients: PatientEntry[] = [
       "dateOfBirth": "1979-01-30",
       "ssn": "300179-77A",
       "gender": "male",
-      "occupation": "Cop"
+      "occupation": "Cop",
+      "entries": []
   },
   {
       "id": "d27736ec-f723-11e9-8f0b-362b9e155667",
