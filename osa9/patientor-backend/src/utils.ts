@@ -3,12 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { NewPatientEntry, Gender } from './types';
+import { NewPatient, Gender } from './types';
 
 import { FinnishSSN } from 'finnish-ssn';
 
-const toNewDiaryEntry = (object: any): NewPatientEntry => {
-  const newEntry: NewPatientEntry = {
+const toNewDiaryEntry = (object: any): NewPatient => {
+  const newEntry: NewPatient = {
     name: parseName(object.name),
     dateOfBirth: parseDate(object.dateOfBirth),
     ssn: parseSsn(object.ssn),
