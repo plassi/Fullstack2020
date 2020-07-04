@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 
 import patientsData from '../../data/patients';
 
-import { Patient, PublicPatient, NewPatient } from '../types';
+import { Patient, PublicPatient, NewPatient, Entry, Gender } from '../types';
 
 const patients: Array<Patient> = patientsData;
 
@@ -36,9 +36,43 @@ const findById = (id: string): Patient | undefined => {
   return entry as Patient;
 };
 
+const addNewEntryToUser = (userId: string, entry: Entry): Patient => {
+  const patient = findById(userId);
+  
+  const newEntry = {
+    ...entry,
+    id: uuid()
+  };
+
+  const newEntries = [];
+  patient?.entries?.forEach(entry => {
+    newEntries.push(entry);
+  });
+  newEntries.push(newEntry);
+  
+  const updatedPatient = {
+    id: patient?.id as string,
+    name: patient?.name as string,
+    gender: patient?.gender as Gender,
+    dateOfBirth: patient?.dateOfBirth as string,
+    ssn: patient?.ssn as string,
+    occupation: patient?.occupation as string,
+    entries: newEntries
+  };
+
+  const existingPatientIndex = patients.findIndex(patient => patient.id === updatedPatient.id);
+
+  patients.splice(existingPatientIndex, 1);
+  patients.push(updatedPatient);
+
+  return updatedPatient as Patient;
+  
+};
+
 export default {
   getEntries,
   getNonSensitiveEntries,
   addEntry,
-  findById
+  findById,
+  addNewEntryToUser
 };
